@@ -1,0 +1,3 @@
+[console_scripts]
+crawler-dataset = crawler_dataset.cli:cli
+
