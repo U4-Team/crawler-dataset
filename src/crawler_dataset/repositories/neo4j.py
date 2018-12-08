@@ -44,7 +44,7 @@ class Neo4jRepository(BaseNeo4jRepository):
             site_properties = {
                 'SITE': dataset_dict['SITE']
             }
-            self.merge_node('SITE', ['Url'], site_properties)
+            self.merge_node('SITE', ['Site'], site_properties)
             self.merge_directed_edge(
                 left_node_by_key='SPARK_ID',
                 left_node_by=company_properties,

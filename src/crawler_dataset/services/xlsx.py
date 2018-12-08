@@ -48,16 +48,16 @@ class XLSXDatasetService(LoggerMixin):
                 raise ValueError('INN is required')
             
             try:
-                inn = int(inn)
+                inn = str(int(inn))
             except Exception as e:
                 raise ValueError(f'Unable to parse INN. Reason: {e}')
             try:
-                kpp = int(kpp)
+                kpp = str(int(kpp))
             except Exception as e:
                 raise ValueError(f'Unable to parse KPP. Reason: {e}')
             
             try:
-                ogrn = int(ogrn)
+                ogrn = str(int(ogrn))
             except Exception as e:
                 raise ValueError(f'Unable to parse OGRN. Reason: {e}')
 
