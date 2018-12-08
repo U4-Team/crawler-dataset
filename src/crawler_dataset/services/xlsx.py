@@ -6,7 +6,7 @@ import pandas
 import phonenumbers
 
 from core.mixins import LoggerMixin
-from crawler_dataset.repositories import Neo4jRepository
+from crawler_dataset.repositories import MongoRepository
 
 
 class ParseError(Exception):
@@ -14,25 +14,27 @@ class ParseError(Exception):
 
 
 class XLSXDatasetService(LoggerMixin):
-    neo4j_repo: Neo4jRepository = Neo4jRepository()
-
+    mongo_repo: MongoRepository = MongoRepository()
     def parse_dataset_from_file(self, xlsx_file: IO[str]):
         self.logger.info('Parsing dataset...')
         dataframe = pandas.read_excel(xlsx_file)
         dataframe = dataframe.where(dataframe.notnull(), None)
-        with self.neo4j_repo as session:
-            size, _ = dataframe.shape
-            for index, row in dataframe.iterrows():
-                progress = round((index/size) * 100, 2)
-                if progress == int(progress):
-                    self.logger.info('Progress: %s', progress)
+        size, _ = dataframe.shape
+        companies = []
+        for index, row in dataframe.iterrows():
+            progress = round((index/size) * 100, 2)
+            if progress == int(progress):
+                self.logger.info('Progress: %s', progress)
 
-                try:
-                    normalized_row = self._normalize_row(row)
-                except ParseError:
-                    continue
-                else:
-                    session.store_dataset_row(normalized_row)
+            try:
+                normalized_row = self._normalize_row(row)
+            except ParseError:
+                continue
+            else:
+                companies.append(normalized_row.to_dict())
+
+        self.logger.info('Writing datas')
+        self.mongo_repo.store_companies(companies)
     
     def _normalize_row(self, row: pandas.Series) -> pandas.Series:
         try:
@@ -75,8 +77,8 @@ class XLSXDatasetService(LoggerMixin):
                 phones = filter(lambda phone: phone, phones)
                 _phones = []
                 for phone in phones:
-                    if not phone.startswith('+'):
-                        phone = f'+{phone}'
+                    if not phone.startswith('+') or not phone.startswith('8 '):
+                        phone = f'+7{phone}'
                     p = phonenumbers.parse(phone)
                     _phones.append(phonenumbers.format_number(p, phonenumbers.PhoneNumberFormat.E164))
                 phones = _phones                    

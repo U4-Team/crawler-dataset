@@ -8,3 +8,4 @@ uvloop==0.11.3
 pandas==0.23.4
 xlrd==1.1.0
 phonenumbers==8.10.2
+pymongo
