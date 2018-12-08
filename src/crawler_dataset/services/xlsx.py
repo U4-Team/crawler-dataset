@@ -40,7 +40,7 @@ class XLSXDatasetService(LoggerMixin):
             ogrn, registration_date, ceo, legal_address, site, \
             email, phone, okved, okved_descr, msp_type, _, proven_manufacturer, _, _ = row
 
-            spark_id = int(spark_id)
+            spark_id = str(int(spark_id))
             if not full_name:
                 raise ValueError('Full name is empty or none')
         
