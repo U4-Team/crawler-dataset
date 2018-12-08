@@ -2,3 +2,5 @@ env/
 .env
 *.swp
 .ipynb_checkpoints
+__pycache__/
+*.pyc
