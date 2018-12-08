@@ -24,7 +24,7 @@ class XLSXDatasetService(LoggerMixin):
             size, _ = dataframe.shape
             for index, row in dataframe.iterrows():
                 progress = round((index/size) * 100, 2)
-                if progress % 10 == 0:
+                if progress == int(progress):
                     self.logger.info('Progress: %s', progress)
 
                 try:
